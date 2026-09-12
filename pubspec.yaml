@@ -1,6 +1,6 @@
 name: taqlyn_nav_go_router
 description: Soft go_router ready-gate helpers for Taqlyn deferred deep links (no Match logic).
-version: 0.1.0
+version: 0.1.1
 homepage: https://taqlyn.com
 repository: https://github.com/taqlyn/nav-go-router
 issue_tracker: https://github.com/taqlyn/nav-go-router/issues
