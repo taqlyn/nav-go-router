@@ -1,0 +1,51 @@
+name: Publish Flutter GoRouter Adapter (pub.dev)
+
+# Publish after taqlyn_sdk is on pub.dev.
+# pub.dev uses tokenless OIDC automated publishing.
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: publish-nav-go-router-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write # Required for pub.dev OIDC exchange
+
+jobs:
+  publish:
+    name: Verify & Publish to pub.dev
+    runs-on: ubuntu-latest
+    environment:
+      name: pubdev
+      url: https://pub.dev/packages/taqlyn_nav_go_router
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Verify package (dry-run)
+        run: dart pub publish --dry-run
+
+      - name: Publish to pub.dev via OIDC
+        run: dart pub publish --force
