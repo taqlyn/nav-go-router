@@ -44,6 +44,27 @@ String? taqlynRedirect({
   return null;
 }
 
+/// Expand a warm short URL before routing (Gap 1).
+///
+/// Inject `TaqlynSdk.resolveIncomingUrl`. Returns [fallbackPath] on failure.
+Future<String> expandIncomingLocation({
+  required String url,
+  required Future<Object?> Function(String url) resolveIncomingUrl,
+  String fallbackPath = '/',
+}) async {
+  try {
+    final resolved = await resolveIncomingUrl(url);
+    if (resolved == null) return fallbackPath;
+    try {
+      final href = (resolved as dynamic).href;
+      if (href is String && href.isNotEmpty) return href;
+    } catch (_) {}
+    return fallbackPath;
+  } catch (_) {
+    return fallbackPath;
+  }
+}
+
 String _readPath(Object link) {
   try {
     final value = (link as dynamic).path;
